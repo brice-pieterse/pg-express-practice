@@ -1,0 +1,4 @@
+REQUIREMENTS
+node_modules
+dist
+.env

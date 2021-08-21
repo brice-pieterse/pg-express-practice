@@ -1,0 +1,2 @@
+/* Replace with your SQL commands */
+CREATE TABLE products (id SERIAL PRIMARY KEY, name VARCHAR(50), price INTEGER, description TEXT, admin_fk_id INTEGER REFERENCES users(id) ON DELETE CASCADE, popularity INTEGER);
