@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "eslint ./src --fix",
     "prettier": "npx prettier --write ./src",
-    "start": "node dist/server",
+    "build": "npx tsc",
+    "start": "npm run build && node dist/server",
     "watch": "tsc-watch --esModuleInterop src/server.ts --outDir ./dist --onSuccess 'node ./dist/server.js'",
     "test": "npx tsc && db-migrate db:create udacity_test && db-migrate --env testDb up && ENV=TEST jasmine && db-migrate db:drop udacity_test"
   },

@@ -1,54 +1,46 @@
 # Storefront Backend Project
 
-## Getting Started
+## Overview
 
-This repo contains a basic Node and Express app to get you started in constructing an API. To get started, clone this repo and run `yarn` in your terminal at the project root.
+The goal was to build a simple RESTful API for an online storefront, complete with users, administrators, products, and orders. The project gave me a chance to practice authentication (JWT, refresh tokens), postgreSQL, database migrations, and integration + endpoint testing with Jasmine and Supertest.
 
-## Required Technologies
-Your application must make use of the following libraries:
-- Postgres for the database
-- Node/Express for the application logic
-- dotenv from npm for managing environment variables
-- db-migrate from npm for migrations
-- jsonwebtoken from npm for working with JWTs
-- jasmine from npm for testing
+## Usage
 
-## Steps to Completion
+To get started, setup a .env file complete with the following variables:
 
-### 1. Plan to Meet Requirements
+```
+ENV=DEV
 
-In this repo there is a `REQUIREMENTS.md` document which outlines what this API needs to supply for the frontend, as well as the agreed upon data shapes to be passed between front and backend. This is much like a document you might come across in real life when building or extending an API. 
+DB_USERNAME=
+DB_PASSWORD=
 
-Your first task is to read the requirements and update the document with the following:
-- Determine the RESTful route for each endpoint listed. Add the RESTful route and HTTP verb to the document so that the frontend developer can begin to build their fetch requests.    
-**Example**: A SHOW route: 'blogs/:id' [GET] 
+DEV_DB_HOST=
+TEST_DB_HOST=
 
-- Design the Postgres database tables based off the data shape requirements. Add to the requirements document the database tables and columns being sure to mark foreign keys.   
-**Example**: You can format this however you like but these types of information should be provided
-Table: Books (id:varchar, title:varchar, author:varchar, published_year:varchar, publisher_id:string[foreign key to publishers table], pages:number)
+DEV_DB=
+TEST_DB=udacity_test
 
-**NOTE** It is important to remember that there might not be a one to one ratio between data shapes and database tables. Data shapes only outline the structure of objects being passed between frontend and API, the database may need multiple tables to store a single shape. 
+BCRYPT_PASSWORD=
+TOKEN_SECRET=
+COOKIE_SECRET=
 
-### 2.  DB Creation and Migrations
+SALT_ROUNDS=
+```
 
-Now that you have the structure of the databse outlined, it is time to create the database and migrations. Add the npm packages dotenv and db-migrate that we used in the course and setup your Postgres database. If you get stuck, you can always revisit the database lesson for a reminder. 
+To run the migrations on your DEV database, make sure to set up a dev database in advance and add it's name, host, username, and password to the .env variables above, then:
 
-You must also ensure that any sensitive information is hashed with bcrypt. If any passwords are found in plain text in your application it will not pass.
+```
+db-migrate --env dev up
+```
 
-### 3. Models
+To run tests and get an overview of the endpoints and functionality:
 
-Create the models for each database table. The methods in each model should map to the endpoints in `REQUIREMENTS.md`. Remember that these models should all have test suites and mocks.
+```
+npm run test
+```
 
-### 4. Express Handlers
+This will run the following script on testDb (configured in the databse.json file), which uses the variables TEST_DB_HOST and TEST_DB=udacity_test from the .env file above. If you want to change the TEST_DB name in the .env file, make sure to update the name in the following script:
 
-Set up the Express handlers to route incoming requests to the correct model method. Make sure that the endpoints you create match up with the enpoints listed in `REQUIREMENTS.md`. Endpoints must have tests and be CORS enabled. 
-
-### 5. JWTs
-
-Add JWT functionality as shown in the course. Make sure that JWTs are required for the routes listed in `REQUIUREMENTS.md`.
-
-### 6. QA and `README.md`
-
-Before submitting, make sure that your project is complete with a `README.md`. Your `README.md` must include instructions for setting up and running your project including how you setup, run, and connect to your database. 
-
-Before submitting your project, spin it up and test each endpoint. If each one responds with data that matches the data shapes from the `REQUIREMENTS.md`, it is ready for submission!
+```
+npx tsc && db-migrate db:create udacity_test && db-migrate --env testDb up && ENV=TEST jasmine && db-migrate db:drop udacity_test
+```
