@@ -96,13 +96,13 @@ npx tsc && db-migrate db:create udacity_test && db-migrate --env testDb up && EN
 
 #### Orders
 - id
-- user_id
-- status of order (open, placed, or fulfilled - ADDED EXTRA functionality)
+- fk_user_id
+- status of order (open, placed, or fulfilled - EXTRA functionality)
 - date_fulfilled (EXTRA)
 - total (EXTRA)
 
 #### Order Products
 - id
-- id of order
-- id of product
+- fk_order_id
+- fk_product_id
 - quantity of this product in the order
