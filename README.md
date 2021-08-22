@@ -79,3 +79,30 @@ npx tsc && db-migrate db:create udacity_test && db-migrate --env testDb up && EN
 - Get User Purchases [token required - Admin User only] (GET '/user/:id/purchases')
 - Get Most Popular Products [token required - Admin User only] (GET '/products/ranking/:limit')
 - Get Number Recent Orders [token required - Admin User only] (GET '/orders/recent/:timeline')
+
+## Data Shapes
+#### Product
+- id
+- name
+- price
+- admin_fk_id (EXTRA: an admin who created/manages this product)
+
+#### User
+- id
+- firstName
+- lastName
+- password
+- username (EXTRA)
+
+#### Orders
+- id
+- user_id
+- status of order (open, placed, or fulfilled - ADDED EXTRA functionality)
+- date_fulfilled (EXTRA)
+- total (EXTRA)
+
+#### Order Products
+- id
+- id of order
+- id of product
+- quantity of this product in the order
