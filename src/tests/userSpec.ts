@@ -42,7 +42,7 @@ describe('Test User Model', () => {
     expect(insert).toEqual(1);
   });
 
-  // tests show
+    // tests show
   it('should return the newly created user', async () => {
     const brice = await user_store.show(Brice.username);
     expect(brice.role).toEqual('user');
@@ -127,12 +127,6 @@ describe('Test User Handlers and Refresh Token Model', () => {
     expect(newRFValue).toEqual(rfTokenReplacement);
   });
 
-  // tests the user show handler
-  it('should show the user', async () => {
-    const user = await user_store.show('nicpiet');
-    expect(user.role).toEqual('user');
-  });
-
   // tests the user authenticate handler
   it('should authenticate the user by returning the user and an access token', async () => {
     const response = await request
@@ -142,6 +136,18 @@ describe('Test User Handlers and Refresh Token Model', () => {
     expect(response.body.user).toBeDefined();
     expect(response.body.access_token).toBeDefined();
     acToken = response.body.access_token;
+  });
+
+  // tests the user show handler
+  it('should show the user', async () => {
+    const response = await request.get('/users/nicpiet').auth(acToken, { type: 'bearer' })
+    expect(response.body.role).toEqual('user');
+  });
+
+  // tests the user index handler
+  it('should show the newly created users', async () => {
+    const response = await request.get('/users').auth(acToken, { type: 'bearer' })
+    expect(response.body.users.length).toEqual(1);
   });
 
   // tests the user update method, with the access token received via the authenticate handler test

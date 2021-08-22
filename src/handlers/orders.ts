@@ -3,7 +3,7 @@
 import { orderStore } from '../models/order';
 import { productStore } from '../models/product';
 import express, { Request, Response } from 'express';
-import { verifyAdmins, verifyUsers } from './users';
+import { verifyAdmins, verifyUsers, store as user_store } from './users';
 
 /* utils _______________________________________________________________ */
 
@@ -85,7 +85,7 @@ const fulfillOrder = async (req: Request, res: Response) => {
         const productsInOrder = await store.indexProducts(parseInt(orderId));
         for (const prod of productsInOrder) {
           const prodId = prod.fk_prod_id;
-          // increment the popularity of the product with this id
+          // increments the popularity of the product with this id
           await prodStore.tallyPurchase(prodId);
         }
         return fulfilledOrder;
@@ -109,6 +109,42 @@ const cancelOrder = async (req: Request, res: Response) => {
     res.status(400).json({ errorType: 'cancel order' });
   }
 };
+
+// restricted to the user this order belongs to, or admins
+const getCurrentOrderByUser = async (req: Request, res: Response) => {
+  try {
+    const username = req.params.username
+    // username must match the user making req, unless req is from an admin
+    if (username !== res.locals.user.username && res.locals.user.role !== 'admin'){
+      throw new Error();
+    }
+    const user = await user_store.show(username)
+    const userRole = res.locals.user.role
+    const order = await store.show(user.id, userRole, 'open')
+    res.json(order)
+  }
+  catch (err){
+    res.status(400).json({errorType: 'Get current order of user'})
+  }
+}
+
+// restricted to the user this order belongs to, or admins
+const getFulfilledOrdersByUser = async (req: Request, res: Response) => {
+  try {
+    const username = req.params.username
+    // username must match the user making req, unless req is from an admin
+    if (username !== res.locals.user.username && res.locals.user.role !== 'admin'){
+      throw new Error();
+    }
+    const userRole = res.locals.user.role
+    const user = await user_store.show(username)
+    const order = await store.show(user.id, userRole, 'fulfilled')
+    res.json(order)
+  }
+  catch (err){
+    res.status(400).json({errorType: 'Get current order of user'})
+  }
+}
 
 // restricted to the user this order belongs to
 const addToOrder = async (req: Request, res: Response) => {
@@ -138,6 +174,8 @@ const addToOrder = async (req: Request, res: Response) => {
 const orderRoutes = (app: express.Application) => {
   app.get('/orders', verifyAdmins, index);
   app.get('/orders/:id', limiter, verifyUsers, show);
+  app.get('/orders/:username/current', verifyUsers, getCurrentOrderByUser);
+  app.get('/orders/:username/fulfilled', verifyUsers, getFulfilledOrdersByUser);
   app.put('/orders/:id/place', limiter, verifyUsers, placeOrder);
   app.put('/orders/:id/fulfill', limiter, verifyAdmins, fulfillOrder);
   app.post('/orders/:id/products', limiter, verifyUsers, addToOrder);

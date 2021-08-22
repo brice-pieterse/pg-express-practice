@@ -96,7 +96,7 @@ const authenticate = async (req: Request, res: Response) => {
 const indexUsers = async (req: Request, res: Response) => {
   try {
     const users = await store.index();
-    res.json(users);
+    res.json({users: users});
   } catch (err) {
     res.status(400).json('Could not index users');
   }
@@ -192,10 +192,10 @@ const deleteUser = async (req: Request, res: Response) => {
 /* routes _______________________________________________________________ */
 
 const userRoutes = (app: express.Application) => {
-  app.get('/users', limiter, indexUsers);
-  app.get('/users/:username', limiter, showUser);
   app.post('/users', signUpLimiter, createUser);
   app.post('/users/auth', limiter, authenticate);
+  app.get('/users', limiter, verifyUsers, indexUsers);
+  app.get('/users/:username', limiter, verifyUsers, showUser);
   app.put('/users/:username', verifyUsers, updateUser);
   app.delete('/users/:username', verifyUsers, deleteUser);
 

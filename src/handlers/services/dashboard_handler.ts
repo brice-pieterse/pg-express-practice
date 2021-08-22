@@ -12,10 +12,14 @@ const store = new dashboardStore();
 
 const getUserPurchases = async (req: Request, res: Response) => {
   let userId;
+  const prods: string[] = []
   try {
     userId = req.params.id;
     const products = await store.getProductsOfUser(parseInt(userId));
-    res.json(products);
+    for (const product of products){
+      prods.push(product.name)
+    }
+    res.json(prods);
   } catch (err) {
     res.status(400).json({ errorType: 'get user purchases' });
   }
@@ -33,9 +37,9 @@ const getMostPopular = async (req: Request, res: Response) => {
 
 const numberOfRecentOrders = async (req: Request, res: Response) => {
   try {
-    const backdate = req.params.timeline;
+    const backdate = req.params.days;
     const recents = await store.getRecentOrders(parseInt(backdate));
-    res.json(recents);
+    res.json(recents.length);
   } catch (err) {
     res.status(400).json({ errorType: 'get number of recent orders' });
   }
@@ -46,7 +50,7 @@ const numberOfRecentOrders = async (req: Request, res: Response) => {
 const dashboardRoutes = (app: express.Application) => {
   app.get('/user/:id/purchases', verifyAdmins, getUserPurchases);
   app.get('/products/ranking/:limit', verifyAdmins, getMostPopular);
-  app.get('/orders/recent/:timeline', verifyAdmins, numberOfRecentOrders);
+  app.get('/orders/recent/:days', verifyAdmins, numberOfRecentOrders);
 };
 
 export default dashboardRoutes;

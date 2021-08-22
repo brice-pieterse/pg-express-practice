@@ -44,3 +44,38 @@ This will run the following script on testDb (configured in the databse.json fil
 ```
 npx tsc && db-migrate db:create udacity_test && db-migrate --env testDb up && ENV=TEST jasmine && db-migrate db:drop udacity_test
 ```
+
+## Api Endpoints
+
+#### Products
+- Index (GET '/products')
+- Show (args: product id) (GET '/products/:id')
+- Create [token required - Admin User only] (POST '/products')
+- Update [token required - Admin User only] (args: product id) (PUT '/products/:id')
+- Delete [token required - Admin User only] (args: product id) (DELETE '/products/:id')
+
+#### Users
+- Index [token required] (GET '/users')
+- Show [token required] (GET '/users/:username') (args: username)
+- Create [token required] (POST '/users')
+- Authenticate (POST '/users/auth')
+- Update [token required] (PUT '/users/:username')
+- Delete [token required] (DELETE '/users/:username')
+
+#### Orders
+- Index [token required - Admin User only] (GET '/orders')
+- Show [token required] (args: order id) (GET '/orders/:id')
+- Current Order by user (args: user id)[token required] (GET '/orders/:username/current')
+- Completed Orders by user (args: user id)[token required] (GET '/orders/:username/fulfilled')
+- Place an order (args: order id) [token required] (PUT '/orders/:id/place')
+- Fulfill an order (args: order id) [token required - Admin User only] (PUT '/orders/:id/fulfill')
+- Add to an order (args: order id) [token required] (POST '/orders/:id/products')
+- Cancel an order (args: order id) [token required] (DELETE '/orders/:id')
+
+#### Refresh Token
+- Get a new access token and refresh token using current refresh token [cookie required: 'refresh_token'] (GET '/users/:id/refresh_auth')
+
+#### Dashboard/Services (EXTRAS)
+- Get User Purchases [token required - Admin User only] (GET '/user/:id/purchases')
+- Get Most Popular Products [token required - Admin User only] (GET '/products/ranking/:limit')
+- Get Number Recent Orders [token required - Admin User only] (GET '/orders/recent/:timeline')

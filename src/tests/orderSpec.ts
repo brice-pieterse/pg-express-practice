@@ -283,4 +283,41 @@ describe('Test Order Handlers', () => {
     expect(response.body.status).toEqual('fulfilled');
     expect(response.body.date_fulfilled).toBeDefined();
   });
+
+  it("should get completed orders by user", async () => {
+    const response = await request.get(`/orders/${user.username}/fulfilled`)
+          .auth(adminAcToken, { type: 'bearer' })
+          .expect(200);
+    expect(response.body.status).toEqual('fulfilled');
+  })
+
+  it("should get current order by user", async () => {
+    const response = await request.get(`/orders/${user.username}/current`)
+          .auth(acToken, { type: 'bearer' })
+          .expect(200);
+    expect(response.body.status).toEqual('open');
+  })
+
+  it("should get the products purchased by user", async () => {
+    const response = await request.get(`/user/${user.id}/purchases`)
+          .auth(adminAcToken, { type: 'bearer' })
+          .expect(200);
+          expect(response.body).toBeDefined()
+          expect(response.body).toEqual(["Game of Thrones"])
+  })
+
+  it("should get the most popular ordered product", async () => {
+    const response = await request.get('/products/ranking/1')
+          .auth(adminAcToken, { type: 'bearer' })
+          .expect(200);
+          expect(response.body).toBeDefined()
+  })
+
+  it("should get the number of recently fulfilled orders", async () => {
+    const response = await request.get('/orders/recent/1')
+          .auth(adminAcToken, { type: 'bearer' })
+          .expect(200);
+          expect(response.body).toBeDefined()
+  })
+
 });

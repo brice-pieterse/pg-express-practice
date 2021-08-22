@@ -138,14 +138,16 @@ export class orderStore {
   async fulfill(orderId: number): Promise<number> {
     try {
       const conn = await Client.connect();
+      /*
       const date = new Date();
       const month = date.getUTCMonth() + 1;
       const day = date.getUTCDate();
       const year = date.getUTCFullYear();
       const newDate = year + '/' + month + '/' + day;
+      */
       const sql =
-        "UPDATE orders SET status = 'fulfilled', date_fulfilled = $1 WHERE id = $2";
-      const result = await conn.query(sql, [newDate, orderId]);
+        "UPDATE orders SET status = 'fulfilled', date_fulfilled = NOW()::DATE WHERE id = $1";
+      const result = await conn.query(sql, [orderId]);
       conn.release();
       return result.rowCount;
     } catch (err) {
